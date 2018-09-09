@@ -1,0 +1,30 @@
+
+/* * {
+    border: 1px dashed red
+} */
+
+body {
+    height: 100%;
+    margin: 0;
+    text-align: center;
+}
+
+.bg {
+    /* The BACKGROUND image used */
+    background: url("../images/2-advanced.jpg");
+    /* Full height */
+    height: 100%; 
+    /* Center and scale the image nicely */
+    background-position: center;
+    /* background-repeat: no-repeat; */ /* WORKS */
+    background-repeat: no-repeat repeat;
+    background-size: cover;
+}
+
+.title-text {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 80px;
+    font-weight: bolder;
+    font-style: italic;
+    color: rgb(68, 11, 121);
+}
