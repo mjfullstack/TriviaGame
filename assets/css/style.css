@@ -1,7 +1,7 @@
 
-/* * {
+* {
     border: 1px dashed red
-} */
+}
 
 body {
     height: 100%;
@@ -27,4 +27,9 @@ body {
     font-weight: bolder;
     font-style: italic;
     color: rgb(68, 11, 121);
+}
+
+.question-row {
+    line-height: 300%;
+    min-block-size: 20%
 }
