@@ -15,31 +15,36 @@ $(document).ready(function(){
         objNamesArr      : [], // Capture the object names we created while consuming raw candy in an array
 
         // Methods
-    
+        fillWrongAnsStrArr : function(qObjNum) {
+            for (var i=0; i< this.numOfAnsPerQ; i++) {
+                this.gameQsObjectsObj[qObjNum].wrongAnsStrArr[i] = this.gameQsObjectsObj[this.gameQsObjectsObj[qObjNum].wrongAnsNumsArr[i] ].name;
+                console.log("============= fillWrongAnsStrArr Start ==========================================")
+                console.log("this.QsObjObj[qObjNum] = " + this.gameQsObjectsObj[qObjNum].printStats());
+                console.log("=============  fillWrongAnsStrArr End  ==========================================")
+            }
+        },
+        
         fillAllWrongAns  : function() {
             for (var j=0; j< this.gameQListNums.length; j++) {
-                console.log("this.gameQListNums[j] = " + this.gameQListNums[j] + " j = " + j)
-                console.log("this.objNamesArr[this.gameQListNums[j]] = " + this.objNamesArr[this.gameQListNums[j]])
-                // this.objNamesArr[this.gameQListNums[j]].fillWrongAnsStrArr();
-                console.log("NamesArr[QListNum[j]] = " + this.objNamesArr[this.gameQListNums[j]]); //Where is NAME / function ???
-                console.log("========================================================")
-                console.log(Object.keys(gameObj.gameQsObjectsObj[j]));
-                console.log("========================================================")
-                console.log("this.QsObjObj[j] = " + this.gameQsObjectsObj[j]);
-                // this.gameQsObjectsObj[j]fillWrongAnsStrArr();
+                // console.log(Object.keys(gameObj.gameQsObjectsObj[j]));
+                this.fillWrongAnsStrArr(j);
             };
         },
 
         fillPresentedAns : function () {
+            // console.log("this.QsObjObj[j] = " + this.gameQsObjectsObj[j].printStats() ); // Reference
             for( var k=0; k < this.gameQListNums.length; k++) {
                 for( var ii = 0; ii < this.numOfAnsPerQ; ii++) {
                     if ( ii === this.gameQsObjectsObj[k].corrAnsLoc) {
-                        this.gameQListNums[k].presentedAnswers[ii] = this.gameQListNums[k].name;
+                        this.gameQsObjectsObj[k].presentedAnswers[ii] = this.gameQsObjectsObj[k].name;
                     } else {
-                        this.gameQListNums[k].presentedAnswers[ii] = this.gameQListNums[k].wrongAnsStrArr[ii];
+                        this.gameQsObjectsObj[k].presentedAnswers[ii] = this.gameQsObjectsObj[k].wrongAnsStrArr[ii];
                     }
                 };
-            };
+                console.log("============= fillPresentedAns Start ===========================================")
+                console.log("this.QsObjObj[k] = " + this.gameQsObjectsObj[k].printStats());
+                console.log("=============  fillPresentedAns End  ===========================================")
+    };
         },
 
         genQListArr      : function () {
@@ -144,6 +149,7 @@ $(document).ready(function(){
         console.log("this.corrAnsLoc = " + this.corrAnsLoc);
         console.log("this.wrongAnsLocs = " + this.wrongAnsLocs);
         console.log("this.wrongNames = " + this.wrongNames);
+        console.log("this.presentedAnswers = " + this.presentedAnswers);
     };
 
 
@@ -151,18 +157,16 @@ $(document).ready(function(){
         return Math.floor(Math.random() * rangeIn); // Correct answer location in 0 to 3
     };
 
-    function fillWrongAnsStrArr () {
-        for (var i=0; i< gameObj.numOfAnsPerQ; i++) {
-            gameObj.gameQsObjectsObj[0].wrongAnsStrArr[i] = gameObj.gameQsObjectsObj[ this.wrongAnsNumsArr[i] ];
-        }
-    };
 
 
 
     // Generate candy objects...
+    var newObjName = {};
+    var genCorrAnsLoc ;
+    var wrongAnsArrNums = [];
+    var genWrongAnsArr = [];
     function consumeRawCandy(numOfRawCandyIn) {
         console.log("numOfRawCandyIn = " + numOfRawCandyIn);
-        var newObjName = "";
         var objCount = 0;
         for ( var i=0; i < 2*numOfRawCandyIn; i=i+2) {
             var newObjNameRaw = rawCandy[i]; // This is just the candy NAME, some with multiple words
@@ -175,23 +179,22 @@ $(document).ready(function(){
                 newObjName = concatNewObjName;
             };
             gameObj.objNamesArr.push(newObjName);
+            genCorrAnsLoc = gameObj.setCorrAnsLoc();
+            wrongAnsArrNums = [];
+            genWrongAnsArr = ["Big", "Bad", "Black", "Bear"];
             console.log("concatNewObjName = " + concatNewObjName + "; newObjName = " + newObjName );
             console.log("gameObj.objNamesArr[objCount] = " + gameObj.objNamesArr[objCount] + "  objCount = " + objCount);
-            var corrAnsLoc = gameObj.setCorrAnsLoc();
-            var wrongAnsArrNums = [];
             gameObj.getRandNoRepeat(gameObj.numOfAnsPerQ, gameObj.numOfQsPerGame, wrongAnsArrNums);
-            // gameObj.getRandNoRepeat(3, 4, wrongAnsArrNums);
             console.log("In consumeRaWCandy, wrongAnsArrNums = " + wrongAnsArrNums);
-            wrongAnsArr = ["Big", "Bad", "Bear"];
-            var newObjName = new Candy( rawCandy[i], rawCandy[i+1], corrAnsLoc, wrongAnsArrNums, wrongAnsArr);
+            newObjName = new Candy( rawCandy[i], rawCandy[i+1], genCorrAnsLoc, wrongAnsArrNums, genWrongAnsArr);
             console.log("newObjName.name = " + newObjName.name );
             // gameObj.gameQsObjectsObj.push(newObjName);
             gameObj.gameQsObjectsObj[objCount] = newObjName; // "Compiles"
-            console.log("******************************");
-            console.log(gameObj.gameQsObjectsObj[objCount]);
-            console.log("******************************");
+            console.log("************ consumeRawCandy Start ******************");
+            console.log(gameObj.gameQsObjectsObj[objCount]); // Correctly shows each object here
+            console.log("************  consumeRawCandy End  ******************");
             // newObjName.printStats(); // BOTH THESE WORK
-            // gameObj.gameQsObjectsObj[objCount].printStats();
+            gameObj.gameQsObjectsObj[objCount].printStats();
             objCount++;
         };
     };
@@ -215,9 +218,9 @@ $(document).ready(function(){
     // Test Code: console.log all the objects in the gameObj.gameQsObjectsObj[jj], S/B 10 Items
     for (var jj=0; jj<gameObj.gameQsObjectsObj.length; jj++) {
         console.log("============= Start of Question Object ===============");
-        console.log(gameObj.gameQsObjectsObj[jj]);
-        console.log("============= Start of Question Object ===============");
-    }
+        console.log(gameObj.gameQsObjectsObj[jj].printStats);
+        console.log("=============  End of Question Object  ===============");
+}
 
     // Now use jQuery to populate the HTML elements via tag class or id...
 
