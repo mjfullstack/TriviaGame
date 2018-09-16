@@ -1,4 +1,7 @@
 $(document).ready(function(){
+    // Add clobal vars to control how much gets console.logged after debugging that section of code.
+    var DEBUG = true;
+    var CURR_DEBUG = true;
 
     /*******************/
     /****   VARS    ****/
@@ -18,33 +21,55 @@ $(document).ready(function(){
         fillWrongAnsStrArr : function(qObjNum) {
             for (var i=0; i< this.numOfAnsPerQ; i++) {
                 this.gameQsObjectsObj[qObjNum].wrongAnsStrArr[i] = this.gameQsObjectsObj[this.gameQsObjectsObj[qObjNum].wrongAnsNumsArr[i] ].name;
+                this.gameQsObjectsObj[qObjNum].spareWrongAns     = this.gameQsObjectsObj[this.gameQsObjectsObj[qObjNum].wrongAnsNumsArr[i+1]].name;
+                if (CURR_DEBUG) {
+                console.log("this.gameQsObjectsObj[qObjNum].spareWrongAns = " + this.gameQsObjectsObj[qObjNum].spareWrongAns);
+                }
+            }
+            if (DEBUG) {
                 console.log("============= fillWrongAnsStrArr Start ==========================================")
+                console.log("qObjNum = " + qObjNum);
+                console.log(this.gameObj);
+                console.log(this.gameQsObjectsObj[qObjNum].prototype, "object", rawCandy[qObjNum], "prop value", "line 25");
                 console.log("this.QsObjObj[qObjNum] = " + this.gameQsObjectsObj[qObjNum].printStats());
                 console.log("=============  fillWrongAnsStrArr End  ==========================================")
-            }
+            };
         },
         
         fillAllWrongAns  : function() {
-            for (var j=0; j< this.gameQListNums.length; j++) {
-                // console.log(Object.keys(gameObj.gameQsObjectsObj[j]));
+            // for (var j=0; j< this.gameQListNums.length; j++) { // NOTE: May want to do ALL 16 candy objects vs the 10 we are using
+            for (var j=0; j< this.numOfRawCandy; j++) { // NOTE: May want to do ALL 16 candy objects vs the 10 we are using
+                if (DEBUG) {
+                    // console.log(Object.keys(gameObj.gameQsObjectsObj[j]));
+                };
                 this.fillWrongAnsStrArr(j);
             };
         },
 
         fillPresentedAns : function () {
-            // console.log("this.QsObjObj[j] = " + this.gameQsObjectsObj[j].printStats() ); // Reference
+            if (DEBUG) {
+                // console.log("this.QsObjObj[j] = " + this.gameQsObjectsObj[j].printStats() ); // Reference
+            };
             for( var k=0; k < this.gameQListNums.length; k++) {
+                var currQItemNum = this.gameQListNums[k];
                 for( var ii = 0; ii < this.numOfAnsPerQ; ii++) {
-                    if ( ii === this.gameQsObjectsObj[k].corrAnsLoc) {
-                        this.gameQsObjectsObj[k].presentedAnswers[ii] = this.gameQsObjectsObj[k].name;
+                    if ( ii === this.gameQsObjectsObj[currQItemNum].corrAnsLoc) {
+                        this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = this.gameQsObjectsObj[currQItemNum].name;
+                    } else if (this.gameQsObjectsObj[currQItemNum].name === this.gameQsObjectsObj[currQItemNum].wrongAnsStrArr[ii]) {
+                        this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = this.gameQsObjectsObj[currQItemNum].spareWrongAns;
+                        if (CURR_DEBUG) {
+                            console.log("HAD TO USE SPARE: this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = " + this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii]);
+                        }
                     } else {
-                        this.gameQsObjectsObj[k].presentedAnswers[ii] = this.gameQsObjectsObj[k].wrongAnsStrArr[ii];
+                        this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = this.gameQsObjectsObj[currQItemNum].wrongAnsStrArr[ii];
                     }
                 };
-                console.log("============= fillPresentedAns Start ===========================================")
-                console.log("this.QsObjObj[k] = " + this.gameQsObjectsObj[k].printStats());
-                console.log("=============  fillPresentedAns End  ===========================================")
-    };
+                if (DEBUG) {
+                    console.log("============= fillPresentedAns Start ===========================================")
+                    console.log("this.QsObjObj[k] = " + this.gameQsObjectsObj[k].printStats());
+                    console.log("=============  fillPresentedAns End  ===========================================")
+                };
+            };
         },
 
         genQListArr      : function () {
@@ -71,7 +96,9 @@ $(document).ready(function(){
                     arrayToFill.push(randNum);
                     numOfItemsFound++;
                 };
-                console.log("arrayToFill = " + arrayToFill)
+                if (DEBUG) {
+                    console.log("arrayToFill = " + arrayToFill)
+                };
             };
         },
 
@@ -89,8 +116,23 @@ $(document).ready(function(){
         ansInCorrect  : 0, // Set at beginning of app and at restart
         unAnswered    : 0,
         gameOver      :  false,
-        // Methods 
-        totalQsCmpl   : function () {ansCorrect + ansInCorrect + unAnswered}
+        totalQsCmpl   : function () { return ( this.ansCorrect + this.ansInCorrect + this.unAnswered ) },
+        // _totalQsCmpl: function () { this.ansCorrect + this.ansInCorrect + this.unAnswered; },
+        // get totalQsCmpl() {
+        //     return this._totalQsCmpl;
+        // },
+        // set totalQsCmpl(value) {
+        //     this._totalQsCmpl = value;
+        // },
+        printTotals   : function () {
+            console.log("gameStats Print of Stats")
+            console.log("this.totalQsToAsk = " + this.totalQsToAsk);
+            console.log("this.ansCorrect = " + this.ansCorrect);
+            console.log("this.ansInCorrect = " + this.ansInCorrect);
+            console.log("this.unAnswered = " + this.unAnswered);
+            console.log("this.gameOver = " + this.gameOver);
+            console.log("this.totalQsCmpl = " + this.totalQsCmpl());
+            }
     };
 
 
@@ -137,9 +179,10 @@ $(document).ready(function(){
         this.name             = name;
         this.clue             = clueIn; // 'Long' text string question: "Which candy...""
         this.corrAnsLoc       = corrLocNum; // Will be randomized 0 to 3 for which answer button to populate
-        this.wrongAnsNumsArr  = wrongAnswerArrNums; // Array of 4 values 0 to 15, no-repeat; Is which candyObjArr[item] to get a name from
+        this.wrongAnsNumsArr  = wrongAnswerArrNums; // Array of 5, less 1 for Spare, so 4 values 0 to 15, no-repeat; Is which candyObjArr[item] to get a name from
         this.wrongAnsStrArr   = wrongAnsStringArr; // Array of 4 strings from Candy.name of 0 to 16 possible candy objects
         this.presentedAnswers = [];
+        this.spareWrongAns    = ""; // Extra Candy Obj Name in case a wrong answer matches the current Q number.
     } ;
 
     // Candy Object Methods
@@ -147,9 +190,10 @@ $(document).ready(function(){
         console.log("this.name = " + this.name);
         console.log("this.clue = " + this.clue);
         console.log("this.corrAnsLoc = " + this.corrAnsLoc);
-        console.log("this.wrongAnsLocs = " + this.wrongAnsLocs);
-        console.log("this.wrongNames = " + this.wrongNames);
+        console.log("this.wrongAnsNumsArr = " + this.wrongAnsNumsArr);
+        console.log("this.wrongAnsStrArr = " + this.wrongAnsStrArr);
         console.log("this.presentedAnswers = " + this.presentedAnswers);
+        console.log("this.spareWrongAns = " + this.spareWrongAns);
     };
 
 
@@ -166,13 +210,17 @@ $(document).ready(function(){
     var wrongAnsArrNums = [];
     var genWrongAnsArr = [];
     function consumeRawCandy(numOfRawCandyIn) {
-        console.log("numOfRawCandyIn = " + numOfRawCandyIn);
+        if (DEBUG) {
+            console.log("numOfRawCandyIn = " + numOfRawCandyIn);
+        };
         var objCount = 0;
         for ( var i=0; i < 2*numOfRawCandyIn; i=i+2) {
             var newObjNameRaw = rawCandy[i]; // This is just the candy NAME, some with multiple words
             newObjNameRaw = newObjNameRaw.split(" "); //.join(""); //, rawCandy[i] );
             newObjNameRaw[0] = newObjNameRaw[0].toLowerCase(); // Better way to make first letter lowercase
-            console.log("newObjNameRaw = " + newObjNameRaw); // WORKS
+            if (DEBUG) {
+                console.log("newObjNameRaw = " + newObjNameRaw); // WORKS
+            };
             var concatNewObjName = "";
             for ( var ii=0; ii<newObjNameRaw.length; ii++) {
                 concatNewObjName += newObjNameRaw[ii];
@@ -182,17 +230,26 @@ $(document).ready(function(){
             genCorrAnsLoc = gameObj.setCorrAnsLoc();
             wrongAnsArrNums = [];
             genWrongAnsArr = ["Big", "Bad", "Black", "Bear"];
-            console.log("concatNewObjName = " + concatNewObjName + "; newObjName = " + newObjName );
-            console.log("gameObj.objNamesArr[objCount] = " + gameObj.objNamesArr[objCount] + "  objCount = " + objCount);
-            gameObj.getRandNoRepeat(gameObj.numOfAnsPerQ, gameObj.numOfQsPerGame, wrongAnsArrNums);
-            console.log("In consumeRaWCandy, wrongAnsArrNums = " + wrongAnsArrNums);
+            if (DEBUG) {
+                console.log("concatNewObjName = " + concatNewObjName + "; newObjName = " + newObjName );
+                console.log("gameObj.objNamesArr[objCount] = " + gameObj.objNamesArr[objCount] + "  objCount = " + objCount);
+            };
+            // gameObj.getRandNoRepeat(gameObj.numOfAnsPerQ, gameObj.numOfQsPerGame, wrongAnsArrNums);
+            gameObj.getRandNoRepeat(gameObj.numOfAnsPerQ+1, gameObj.numOfRawCandy, wrongAnsArrNums);
+            if (CURR_DEBUG) {
+                console.log("In consumeRawCandy, wrongAnsArrNums = " + wrongAnsArrNums);
+            };
             newObjName = new Candy( rawCandy[i], rawCandy[i+1], genCorrAnsLoc, wrongAnsArrNums, genWrongAnsArr);
-            console.log("newObjName.name = " + newObjName.name );
+            if (DEBUG) {
+                console.log("newObjName.name = " + newObjName.name );
+            };
             // gameObj.gameQsObjectsObj.push(newObjName);
             gameObj.gameQsObjectsObj[objCount] = newObjName; // "Compiles"
-            console.log("************ consumeRawCandy Start ******************");
-            console.log(gameObj.gameQsObjectsObj[objCount]); // Correctly shows each object here
-            console.log("************  consumeRawCandy End  ******************");
+            if (DEBUG) {
+                console.log("************ consumeRawCandy Start ******************");
+                console.log(gameObj.gameQsObjectsObj[objCount]); // Correctly shows each object here
+                console.log("************  consumeRawCandy End  ******************");
+            };
             // newObjName.printStats(); // BOTH THESE WORK
             gameObj.gameQsObjectsObj[objCount].printStats();
             objCount++;
@@ -203,11 +260,13 @@ $(document).ready(function(){
     consumeRawCandy(gameObj.numOfRawCandy); // This call and the function WORK, 09/09/18
 
     gameObj.genQListArr();
-    // Display this games parameters
-    console.log("Display this games parameters...")
-    console.log("gameObj.numOfRawCandy = " + gameObj.numOfRawCandy);
-    console.log("gameObj.numOfQsPerGame = " + gameObj.numOfQsPerGame);
-    console.log("gameObj.gameQListNums = " + gameObj.gameQListNums);
+    if (DEBUG) {
+        // Display this games parameters
+        console.log("Display this games parameters...")
+        console.log("gameObj.numOfRawCandy = " + gameObj.numOfRawCandy);
+        console.log("gameObj.numOfQsPerGame = " + gameObj.numOfQsPerGame);
+        console.log("gameObj.gameQListNums = " + gameObj.gameQListNums);
+    };
 
     // Populate the Objects wrong answers and presented answers - via FOR-loops
     // Populate the game object wrong answer names array with the text values of the wrongAnsArrNums
@@ -215,32 +274,104 @@ $(document).ready(function(){
     // Now populate the gameQsObjectsObj[x].presentedAns to complete the gameQsObjectsObj[x] item.
     gameObj.fillPresentedAns(); // This places the correct name at the correc answer's loc and wrong answers in the other three locations
 
-    // Test Code: console.log all the objects in the gameObj.gameQsObjectsObj[jj], S/B 10 Items
+    // Test Code: console.log all the objects in the gameObj.gameQsObjectsObj[jj], S/B 16 Items
     for (var jj=0; jj<gameObj.gameQsObjectsObj.length; jj++) {
-        console.log("============= Start of Question Object ===============");
-        console.log(gameObj.gameQsObjectsObj[jj].printStats);
-        console.log("=============  End of Question Object  ===============");
-}
+        if (DEBUG) {
+            console.log("============= Start of Question Object ===============");
+            console.log("ggameObj.gameQsObjectsObj.length = " + gameObj.gameQsObjectsObj.length);
+            console.log("gameObj.gameQListNums[jj] = " + gameObj.gameQListNums[jj] + "jj = " + jj);
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[jj]].clue = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[jj]].clue);
+            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[jj]].printStats);
+            console.log("=============  End of Question Object  ===============");
+        };
+    };
 
-    // Now use jQuery to populate the HTML elements via tag class or id...
-
+    for (var kk=0; kk<gameObj.numOfQsPerGame; kk++) {
+        // Now use jQuery to populate the HTML elements via tag class or id...
+        if (DEBUG) {
+            console.log("============= Start of jQuery Object  ===============");
+            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue);
+            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers);
+            console.log("=============  End of jQuery Object  ===============");
+        };
+        $("#ask-question").html("<h2>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue + "</h2>");
+        // var questionTimeout = setTimeout(function() {
+        //     $("#" + ask-question).show();
+        // }, 2000);
+        
+        for (var i = 0; i< gameObj.numOfAnsPerQ; i++) {
+            $("#button-answer"+i).html("<h3>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers[i] + "</h3>");
+            // var answerTimeout = setTimeout(function() {
+                //     $("#" + button-answer).show();
+                // }, 2000);
+            };
+        };
 
 
     /////////////////////
     // RE-START BUTTON //
     /////////////////////
-    $(".button-start-re-start").on("click", function() {
+    $("#button-re-start").hover( function () {
+        $("#button-re-start").css("background-color", "blue");
+    }, function () {
+        $("#button-re-start").css("background-color", "purple");
+    } );
+    // $(".button-start-re-start").on("click", function() {
+    $("#button-re-start").on("click", function() {
         // Initialize Vars
-
-
+        if (DEBUG) {
+            console.log("That's the RE-START button!");
+        };
+        gameStats.ansInCorrect = 0;
+        gameStats.ansCorrect = 0;
+        gameStats.unAnswered = 0;
+        gameStats.printTotals();
+        if (DEBUG) {
+            console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
+            console.log("RE-START: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " + gameStats.totalQsToAsk);
+        };
+        gameStats.ansInCorrect++;
         // Initialize Attributes / Classes
 
     } );
 
-    $(".button-sel-answer").on("click", function() {
+// #button-answer0, #button-answer1, #button-answer2, #button-answer3"
+    $("#button-answer0").hover( function () {
+        $("#button-answer0").css("background-color", "orange");
+    }, function () {
+        $("#button-answer0").css("background-color", "purple");
+    } );
+    $("#button-answer1").hover( function () {
+        $("#button-answer1").css("background-color", "orange");
+    }, function () {
+        $("#button-answer1").css("background-color", "purple");
+    } );
+    $("#button-answer2").hover( function () {
+        $("#button-answer2").css("background-color", "orange");
+    }, function () {
+        $("#button-answer2").css("background-color", "purple");
+    } );
+    $("#button-answer3").hover( function () {
+        $("#button-answer3").css("background-color", "orange");
+    }, function () {
+        $("#button-answer3").css("background-color", "purple");
+    } );
+    $(".button-answer-sel").on("click", function() {
         // Identify button clicked
-
-
+        if (DEBUG) {
+            console.log("That's the answer button group!");
+            console.log("ANSWER-SEL: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " +  gameStats.totalQsToAsk);
+        };
+        if ( gameStats.totalQsCmpl() < gameStats.totalQsToAsk) {
+            if (DEBUG) {
+                console.log("That's another one! TotalCmpl = " + gameStats.totalQsCmpl());
+            };
+            gameStats.ansCorrect++;
+            if (DEBUG) {
+                console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
+            };
+            gameStats.printTotals();
+        }
         // Compare this button number with the correct answer button number for this question
         // if ( ) {
 

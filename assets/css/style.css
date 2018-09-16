@@ -1,7 +1,7 @@
 
-* {
+/* * {
     border: 1px dashed red
-}
+} */
 
 body {
     height: 100%;
@@ -26,10 +26,29 @@ body {
     font-size: 80px;
     font-weight: bolder;
     font-style: italic;
+    padding: 0px;
     color: rgb(68, 11, 121);
 }
 
 .question-row {
-    line-height: 300%;
+    line-height: 200%;
     min-block-size: 20%
 }
+
+#col-left-side-margin {
+    float: left;
+}
+
+#col-right-side-margin {
+    float: right;
+}
+
+.button, .button-start{
+    width: 300px;
+    min-height: 30px;
+    background-color: purple;
+    color: white;
+    font-weight: bolder;
+    font-style: italic;
+}
+
