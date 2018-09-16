@@ -1,6 +1,6 @@
 $(document).ready(function(){
     // Add clobal vars to control how much gets console.logged after debugging that section of code.
-    var DEBUG = true;
+    var DEBUG = false;
     var CURR_DEBUG = true;
 
     /*******************/
@@ -12,6 +12,8 @@ $(document).ready(function(){
         // Game Size, Raw Candy Bar Instantiations, and how many will be selected per game
         numOfRawCandy    : 16,
         numOfQsPerGame   : 10,
+        currQuestion     : 0,
+        initialPageLoad  : true,
         numOfAnsPerQ     : 4,  // This may become randomized later, but for now, we're starting with fixed at 4
         gameQListNums    : [], // Index numbers for which 10 of the 16 candy objects will be used in this game.
         gameQsObjectsObj : {}, // Collection in an object of the actual Candy object of each candy / question in this game
@@ -22,7 +24,7 @@ $(document).ready(function(){
             for (var i=0; i< this.numOfAnsPerQ; i++) {
                 this.gameQsObjectsObj[qObjNum].wrongAnsStrArr[i] = this.gameQsObjectsObj[this.gameQsObjectsObj[qObjNum].wrongAnsNumsArr[i] ].name;
                 this.gameQsObjectsObj[qObjNum].spareWrongAns     = this.gameQsObjectsObj[this.gameQsObjectsObj[qObjNum].wrongAnsNumsArr[i+1]].name;
-                if (CURR_DEBUG) {
+                if (DEBUG) {
                 console.log("this.gameQsObjectsObj[qObjNum].spareWrongAns = " + this.gameQsObjectsObj[qObjNum].spareWrongAns);
                 }
             }
@@ -57,7 +59,7 @@ $(document).ready(function(){
                         this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = this.gameQsObjectsObj[currQItemNum].name;
                     } else if (this.gameQsObjectsObj[currQItemNum].name === this.gameQsObjectsObj[currQItemNum].wrongAnsStrArr[ii]) {
                         this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = this.gameQsObjectsObj[currQItemNum].spareWrongAns;
-                        if (CURR_DEBUG) {
+                        if (DEBUG) {
                             console.log("HAD TO USE SPARE: this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii] = " + this.gameQsObjectsObj[currQItemNum].presentedAnswers[ii]);
                         }
                     } else {
@@ -135,6 +137,54 @@ $(document).ready(function(){
             }
     };
 
+    function postQuestion (kk) {
+        // Now use jQuery to populate the HTML elements via tag class or id...
+        if (DEBUG) {
+            console.log("============= Start of jQuery Object  ===============");
+            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue);
+            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers);
+            console.log("=============  End of jQuery Object  ===============");
+        };
+        $("#ask-question").html("<h2>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue + "</h2>");
+        // var questionTimeout = setTimeout(function() {
+        //     $("#" + ask-question).show();
+        // }, 2000);
+        
+        for (var i = 0; i< gameObj.numOfAnsPerQ; i++) {
+            $("#button-answer"+i).html("<h3>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers[i] + "</h3>");
+            // var answerTimeout = setTimeout(function() {
+                //     $("#" + button-answer).show();
+                // }, 2000);
+            };
+        gameObj.currQuestion++;
+    };
+
+    function initGame() {
+        gameStats.ansInCorrect = 0;
+        gameStats.ansCorrect = 0;
+        gameStats.unAnswered = 0;
+        gameStats.printTotals();
+        if (CURR_DEBUG) {
+            console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
+            console.log("RE-START: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " + gameStats.totalQsToAsk);
+        };
+        // gameStats.ansInCorrect++;
+        // Initialize Attributes / Classes
+        // TBD, timer, etc
+    };
+
+    function celebrateCorrAns() {
+        if ( CURR_DEBUG) {
+            console.log("celebrateCorrAns!!!"); // More to come
+        }
+        
+    };
+
+    function nonCelebrateWrongAns() {
+        if ( CURR_DEBUG) {
+            console.log("Troll them,humuliate them, They DIDN'T know their candies!!!");
+        }
+    };
 
 
     // // TBD IF NEEDED... Question Object's Properties Initialization
@@ -201,7 +251,10 @@ $(document).ready(function(){
         return Math.floor(Math.random() * rangeIn); // Correct answer location in 0 to 3
     };
 
-
+    function displayFinalResults() {
+        console.log("Displaying FINAL Score")
+        gameStats.printTotals();
+    }
 
 
     // Generate candy objects...
@@ -236,7 +289,7 @@ $(document).ready(function(){
             };
             // gameObj.getRandNoRepeat(gameObj.numOfAnsPerQ, gameObj.numOfQsPerGame, wrongAnsArrNums);
             gameObj.getRandNoRepeat(gameObj.numOfAnsPerQ+1, gameObj.numOfRawCandy, wrongAnsArrNums);
-            if (CURR_DEBUG) {
+            if (DEBUG) {
                 console.log("In consumeRawCandy, wrongAnsArrNums = " + wrongAnsArrNums);
             };
             newObjName = new Candy( rawCandy[i], rawCandy[i+1], genCorrAnsLoc, wrongAnsArrNums, genWrongAnsArr);
@@ -249,9 +302,9 @@ $(document).ready(function(){
                 console.log("************ consumeRawCandy Start ******************");
                 console.log(gameObj.gameQsObjectsObj[objCount]); // Correctly shows each object here
                 console.log("************  consumeRawCandy End  ******************");
+                // newObjName.printStats(); // BOTH THESE WORK
+                gameObj.gameQsObjectsObj[objCount].printStats();
             };
-            // newObjName.printStats(); // BOTH THESE WORK
-            gameObj.gameQsObjectsObj[objCount].printStats();
             objCount++;
         };
     };
@@ -260,7 +313,7 @@ $(document).ready(function(){
     consumeRawCandy(gameObj.numOfRawCandy); // This call and the function WORK, 09/09/18
 
     gameObj.genQListArr();
-    if (DEBUG) {
+    if (CURR_DEBUG) {
         // Display this games parameters
         console.log("Display this games parameters...")
         console.log("gameObj.numOfRawCandy = " + gameObj.numOfRawCandy);
@@ -286,28 +339,11 @@ $(document).ready(function(){
         };
     };
 
-    for (var kk=0; kk<gameObj.numOfQsPerGame; kk++) {
-        // Now use jQuery to populate the HTML elements via tag class or id...
-        if (DEBUG) {
-            console.log("============= Start of jQuery Object  ===============");
-            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue);
-            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers);
-            console.log("=============  End of jQuery Object  ===============");
-        };
-        $("#ask-question").html("<h2>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue + "</h2>");
-        // var questionTimeout = setTimeout(function() {
-        //     $("#" + ask-question).show();
-        // }, 2000);
-        
-        for (var i = 0; i< gameObj.numOfAnsPerQ; i++) {
-            $("#button-answer"+i).html("<h3>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers[i] + "</h3>");
-            // var answerTimeout = setTimeout(function() {
-                //     $("#" + button-answer).show();
-                // }, 2000);
-            };
-        };
+    if ( gameObj.initialPageLoad) {
+        postQuestion(gameObj.currQuestion);
+    };
 
-
+    
     /////////////////////
     // RE-START BUTTON //
     /////////////////////
@@ -322,16 +358,13 @@ $(document).ready(function(){
         if (DEBUG) {
             console.log("That's the RE-START button!");
         };
-        gameStats.ansInCorrect = 0;
-        gameStats.ansCorrect = 0;
-        gameStats.unAnswered = 0;
-        gameStats.printTotals();
-        if (DEBUG) {
-            console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
-            console.log("RE-START: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " + gameStats.totalQsToAsk);
+        if ( !gameObj.initialPageLoad) {
+            initGame();
         };
-        gameStats.ansInCorrect++;
-        // Initialize Attributes / Classes
+            stopwatch.stop();
+            stopwatch.reset();
+            postQuestion(gameObj.currQuestion); // currQuestion incremented at the end of the function.
+            stopwatch.start();
 
     } );
 
@@ -358,20 +391,44 @@ $(document).ready(function(){
     } );
     $(".button-answer-sel").on("click", function() {
         // Identify button clicked
-        if (DEBUG) {
+        if (CURR_DEBUG) {
             console.log("That's the answer button group!");
             console.log("ANSWER-SEL: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " +  gameStats.totalQsToAsk);
         };
+
+        var ansSelected = $(".button-answer-sel").val().trim();
+
+        if (CURR_DEBUG) {
+            console.log("ANSWER-SEL: ansSelected = " + ansSelected );
+            console.log("gameObj.currQuestion = " + gameObj.currQuestion);
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ] = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ] );
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ].corrAnsLoc = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ].corrAnsLoc);
+        };
+        
+        if (ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ].corrAnsLoc ) {
+            gameStats.ansCorrect++;
+            celebrateCorrAns();
+        } else {
+            gameStats.ansInCorrect++;
+            nonCelebrateWrongAns();
+        };
+
+
+
+
         if ( gameStats.totalQsCmpl() < gameStats.totalQsToAsk) {
-            if (DEBUG) {
+            if (CURR_DEBUG) {
                 console.log("That's another one! TotalCmpl = " + gameStats.totalQsCmpl());
             };
-            gameStats.ansCorrect++;
-            if (DEBUG) {
-                console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
-            };
+        } else {
+            // Game Over, display final results
+            displayFinalResults();
+        };
+        if (CURR_DEBUG) {
+            console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
             gameStats.printTotals();
-        }
+        };
+
         // Compare this button number with the correct answer button number for this question
         // if ( ) {
 

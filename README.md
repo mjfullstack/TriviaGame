@@ -14,3 +14,4 @@ Sugar Rush ACandy Trivia Game
 	   placement then correct answer selection, scoring, and re-start
 * 09/15/18 Randomization is functional.Need answer eval, stats, and timer function.
 * 09/15/18 Initial Timer Implementation 
+* 09/15/18 Initial answer correct / incorrect detection added... debug in process
