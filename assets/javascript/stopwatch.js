@@ -4,10 +4,10 @@
 window.onload = function() {
 
   //  Click events are done for us:
-  $("#lap").click(stopwatch.recordLap);
-  $("#stop").click(stopwatch.stop);
-  $("#reset").click(stopwatch.reset);
-  $("#start").click(stopwatch.start);
+  // $("#lap").click(stopwatch.recordLap);
+  $("#button-re-start").click(stopwatch.stop);
+  $("#button-re-start").click(stopwatch.reset);
+  $("#button-re-start").click(stopwatch.start);
 };
 
 //  Variable that will hold our setInterval that runs the stopwatch
@@ -19,19 +19,19 @@ var clockRunning = false;
 //  Our stopwatch object.
 var stopwatch = {
 
-  time: 0,
-  lap: 1,
-  lapsHtml : "",
+  time: 30,
+  // lap: 1,
+  // lapsHtml : "",
 
   reset: function() {
 
-    stopwatch.time = 0;
-    stopwatch.lap = 1;
+    stopwatch.time = 30;
+    // stopwatch.lap = 1;
 
     //  TODO: Change the "display" div to "00:00."
-    $('#display').html("00:00");
-    stopwatch.lapsHtml = "";
-    $('#laps').html(  stopwatch.lapsHtml   );
+    $('#timer-display').html("00:30");
+    // stopwatch.lapsHtml = "";
+    // $('#laps').html(  stopwatch.lapsHtml   );
 
   },
 
@@ -64,8 +64,8 @@ var stopwatch = {
     var convertedTime = stopwatch.timeConverter(stopwatch.time);
 
     //  TODO: Add the current lap and time to the "laps" div.
-    stopwatch.lapsHtml += "Lap Count = " + stopwatch.lap + " at time: " + convertedTime + "<br>";
-    $('#laps').html(  stopwatch.lapsHtml   );
+    // stopwatch.lapsHtml += "Lap Count = " + stopwatch.lap + " at time: " + convertedTime + "<br>";
+    // $('#laps').html(  stopwatch.lapsHtml   );
 
     //  TODO: Increment lap by 1. Remember, we can't use "this" here.
     stopwatch.lap++;
@@ -74,13 +74,19 @@ var stopwatch = {
   count: function() {
 
     //  TODO: increment time by 1, remember we cant use "this" here.
-    stopwatch.time++;
+    stopwatch.time--;
+    if ( stopwatch.time <= 0 ) {
+      stopwatch.stop();
+      stopwatch.reset();
+      // get next Q/A...displayed
+      // stopwatch.start();
+    }
 
     //  TODO: Get the current time, pass that into the stopwatch.timeConverter function,
     //        and save the result in a variable.
     var convertedTime = stopwatch.timeConverter(stopwatch.time);
     //  TODO: Use the variable you just created to show the converted time in the "display" div.
-    $('#display').html(convertedTime);
+    $('#timer-display').html(convertedTime);
     // console.log("Inside Count!!!");
   },
 
