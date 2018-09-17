@@ -430,7 +430,14 @@ $(document).ready(function(){
             console.log("gameObj.currQuestion = " + gameObj.currQuestion + "; S/B 0 to 9 Incrementing");
             console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ] = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ] );
         };
-        
+
+        // Color the correct answer then 
+        $("#button-answer"+ gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc).css("background-color" , "lime");
+        // alert("#button-answer"+ gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc);
+        $("#button-answer"+ gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc).css("background-color", "lime");
+        var delayColorCorrect = setTimeout(function() {
+            $("#button-answer"+ gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc).css("background-color", "purple");
+        }, 2000);   
         // Compare this button number with the correct answer button number for this question
         if (+ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc ) {
             // Increment appropriate answer count
@@ -443,7 +450,7 @@ $(document).ready(function(){
         } else {
             gameStats.ansInCorrect++;
             $(this).css("background-color", "red");
-                var delayBtnColorIncorr= setTimeout(function() {
+                var delayBtnColorInCorr= setTimeout(function() {
                     $(this).css("background-color", "purple");
                 }, 2000);   
             nonCelebrateWrongAns();
