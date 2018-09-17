@@ -127,7 +127,7 @@ $(document).ready(function(){
         //     this._totalQsCmpl = value;
         // },
         printTotals   : function () {
-            console.log("gameStats Print of Stats")
+            console.log("gameStats Print of printTotals")
             console.log("this.totalQsToAsk = " + this.totalQsToAsk);
             console.log("this.ansCorrect = " + this.ansCorrect);
             console.log("this.ansInCorrect = " + this.ansInCorrect);
@@ -139,10 +139,11 @@ $(document).ready(function(){
 
     function postQuestion (kk) {
         // Now use jQuery to populate the HTML elements via tag class or id...
-        if (DEBUG) {
+        if (CURR_DEBUG) {
             console.log("============= Start of jQuery Object  ===============");
-            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue);
-            console.log(gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers);
+            console.log("kk = " + kk + "; gameObj.gameQListNums[kk] = " +gameObj.gameQListNums[kk]);
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue); = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue);
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers);
             console.log("=============  End of jQuery Object  ===============");
         };
         $("#ask-question").html("<h2>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue + "</h2>");
@@ -156,6 +157,10 @@ $(document).ready(function(){
                 //     $("#" + button-answer).show();
                 // }, 2000);
             };
+        if (CURR_DEBUG) {
+            gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].printStats()
+            gameStats.printTotals();
+        };
         gameObj.currQuestion++;
     };
 
@@ -175,8 +180,16 @@ $(document).ready(function(){
 
     function celebrateCorrAns() {
         if ( CURR_DEBUG) {
-            console.log("celebrateCorrAns!!!"); // More to come
+            console.log("celebrateCorrAns!!!");
         }
+        var saveCurrentDisplay = $("#game-name").text();
+        // More to come
+        $("#game-name").text("CORRECT!");
+        $("#game-name").css("color", "green");
+        var delayCorrDisp = setTimeout(function() {
+            $("#game-name").text(saveCurrentDisplay); // Display this answer's result briefly
+        }, 2000);
+        $("#game-name").css("color", "purple");
         
     };
 
@@ -184,6 +197,16 @@ $(document).ready(function(){
         if ( CURR_DEBUG) {
             console.log("Troll them,humuliate them, They DIDN'T know their candies!!!");
         }
+        var saveCurrentDisplay = $("#game-name").text();
+        // alert("saveCurrentDisplay = " + saveCurrentDisplay);
+        // More to come
+        $("#game-name").text("NOPE!");
+        $("#game-name").css("color", "red");
+        var delayInCorrDisp = setTimeout(function() {
+        $("#game-name").text(saveCurrentDisplay); // Display this answer's result briefly
+        }, 2000);
+        $("#game-name").css("color", "purple");
+
     };
 
 
@@ -237,6 +260,7 @@ $(document).ready(function(){
 
     // Candy Object Methods
     Candy.prototype.printStats = function() {
+        console.log("Candy.prototype Print of printStats")
         console.log("this.name = " + this.name);
         console.log("this.clue = " + this.clue);
         console.log("this.corrAnsLoc = " + this.corrAnsLoc);
@@ -339,9 +363,14 @@ $(document).ready(function(){
         };
     };
 
-    if ( gameObj.initialPageLoad) {
-        postQuestion(gameObj.currQuestion);
-    };
+    if (CURR_DEBUG) {
+        console.log("gameObj.initialPageLoad = " + gameObj.initialPageLoad);
+    }
+
+    // Hide game Q & A until start button is pressed
+    $(".button-answer-sel").hide();
+    $("#ask-question").hide();
+    $("#timer-text").hide();
 
     
     /////////////////////
@@ -353,14 +382,23 @@ $(document).ready(function(){
         $("#button-re-start").css("background-color", "purple");
     } );
     // $(".button-start-re-start").on("click", function() {
-    $("#button-re-start").on("click", function() {
-        // Initialize Vars
-        if (DEBUG) {
-            console.log("That's the RE-START button!");
-        };
-        if ( !gameObj.initialPageLoad) {
-            initGame();
-        };
+        $("#button-re-start").on("click", function() {
+            // Initialize Vars
+            $("#button-re-start").css("background-color", "purple");    
+            if (CURR_DEBUG) {
+                console.log("That's the RE-START button!");
+                console.log("gameObj.initialPageLoad = " + gameObj.initialPageLoad);
+            };
+            if ( !gameObj.initialPageLoad) {
+                initGame();
+            };
+            // Done with initial page load and start button pressed!
+            gameObj.initialPageLoad = false;
+            // Show question and Answer buttons
+            $(".button-answer-sel").show();
+            $("#ask-question").show();
+            $("#timer-text").show();
+            // Set up timer and post the question
             stopwatch.stop();
             stopwatch.reset();
             postQuestion(gameObj.currQuestion); // currQuestion incremented at the end of the function.
@@ -390,22 +428,37 @@ $(document).ready(function(){
         $("#button-answer3").css("background-color", "purple");
     } );
     $(".button-answer-sel").on("click", function() {
+        $(".button-answer-sel").css("background-color", "purple");
         // Identify button clicked
         if (CURR_DEBUG) {
             console.log("That's the answer button group!");
             console.log("ANSWER-SEL: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " +  gameStats.totalQsToAsk);
         };
 
-        var ansSelected = $(".button-answer-sel").val().trim();
-
+        // var ansSelected = $(".button-answer-sel").val().trim();
+        // var ansSelected = $(".button-answer-sel").text();
+        // Get the specific ID from the button clicked
+        ansSelected = "#" + $(this).attr("id");
+        // alert('$(this).attr("id") = ' + $(this).attr("id") + "; ansSelected = " + ansSelected);
         if (CURR_DEBUG) {
-            console.log("ANSWER-SEL: ansSelected = " + ansSelected );
-            console.log("gameObj.currQuestion = " + gameObj.currQuestion);
-            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ] = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ] );
-            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ].corrAnsLoc = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ].corrAnsLoc);
+            console.log("ON CLICK ANSWER-SEL: ansSelected = " + ansSelected + "; ansSelected[ansSelected.length-1] = " + ansSelected[ansSelected.length-1]);
+            ansSelected = ansSelected[ansSelected.length-1];
+            console.log("ansSelected = " + ansSelected + "; ");
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc);
+            if (+ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc) {
+                console.log("ON CLICK ANSWER-SEL: +ansSelected DID === corrAnsLoc");
+            } else if (ansSelected == gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc) {
+                console.log("ON CLICK ANSWER-SEL: +ansSelected DID == corrAnsLoc");
+            } else {
+                console.log("ON CLICK ANSWER-SEL: +ansSelected DID NOT === OR == corrAnsLoc");
+            };
+            console.log("gameObj.currQuestion = " + gameObj.currQuestion + "; S/B 0 to 9 Incrementing");
+            console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ] = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ] );
         };
         
-        if (ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion] ].corrAnsLoc ) {
+        // Compare this button number with the correct answer button number for this question
+        if (+ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc ) {
+            // Increment appropriate answer count
             gameStats.ansCorrect++;
             celebrateCorrAns();
         } else {
@@ -413,12 +466,15 @@ $(document).ready(function(){
             nonCelebrateWrongAns();
         };
 
-
-
-
+        // Check if all 10 questions have been asked...
         if ( gameStats.totalQsCmpl() < gameStats.totalQsToAsk) {
             if (CURR_DEBUG) {
-                console.log("That's another one! TotalCmpl = " + gameStats.totalQsCmpl());
+                console.log("Let's ASK another one! TotalCmpl = " + gameStats.totalQsCmpl());
+                stopwatch.stop();
+                stopwatch.reset();
+                postQuestion(gameObj.currQuestion); // currQuestion incremented at the end of the function.
+                stopwatch.start();
+    
             };
         } else {
             // Game Over, display final results
@@ -429,16 +485,8 @@ $(document).ready(function(){
             gameStats.printTotals();
         };
 
-        // Compare this button number with the correct answer button number for this question
-        // if ( ) {
-
-        // Increment appropriate answer count
-        // ansCorrect++;
-        // ansInCorrect++;
         // unAnswered++;
-        // questionsPresented++;
 
-        // Check if all 10 questions have been asked...
         // if ( questionsPresented <= 10 ) {
             // continue asking questions 
     // } else {
