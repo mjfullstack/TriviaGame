@@ -119,13 +119,6 @@ $(document).ready(function(){
         unAnswered    : 0,
         gameOver      :  false,
         totalQsCmpl   : function () { return ( this.ansCorrect + this.ansInCorrect + this.unAnswered ) },
-        // _totalQsCmpl: function () { this.ansCorrect + this.ansInCorrect + this.unAnswered; },
-        // get totalQsCmpl() {
-        //     return this._totalQsCmpl;
-        // },
-        // set totalQsCmpl(value) {
-        //     this._totalQsCmpl = value;
-        // },
         printTotals   : function () {
             console.log("gameStats Print of printTotals")
             console.log("this.totalQsToAsk = " + this.totalQsToAsk);
@@ -139,7 +132,7 @@ $(document).ready(function(){
 
     function postQuestion (kk) {
         // Now use jQuery to populate the HTML elements via tag class or id...
-        if (CURR_DEBUG) {
+        if (DEBUG) {
             console.log("============= Start of jQuery Object  ===============");
             console.log("kk = " + kk + "; gameObj.gameQListNums[kk] = " +gameObj.gameQListNums[kk]);
             console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue); = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue);
@@ -147,17 +140,11 @@ $(document).ready(function(){
             console.log("=============  End of jQuery Object  ===============");
         };
         $("#ask-question").html("<h2>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].clue + "</h2>");
-        // var questionTimeout = setTimeout(function() {
-        //     $("#" + ask-question).show();
-        // }, 2000);
         
         for (var i = 0; i< gameObj.numOfAnsPerQ; i++) {
             $("#button-answer"+i).html("<h3>" + gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].presentedAnswers[i] + "</h3>");
-            // var answerTimeout = setTimeout(function() {
-                //     $("#" + button-answer).show();
-                // }, 2000);
             };
-        if (CURR_DEBUG) {
+        if (DEBUG) {
             gameObj.gameQsObjectsObj[gameObj.gameQListNums[kk]].printStats()
             gameStats.printTotals();
         };
@@ -169,7 +156,7 @@ $(document).ready(function(){
         gameStats.ansCorrect = 0;
         gameStats.unAnswered = 0;
         gameStats.printTotals();
-        if (CURR_DEBUG) {
+        if (DEBUG) {
             console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
             console.log("RE-START: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " + gameStats.totalQsToAsk);
         };
@@ -179,45 +166,35 @@ $(document).ready(function(){
     };
 
     function celebrateCorrAns() {
-        if ( CURR_DEBUG) {
+        if ( DEBUG) {
             console.log("celebrateCorrAns!!!");
         }
         var saveCurrentDisplay = $("#game-name").text();
         // More to come
-        $("#game-name").text("CORRECT!");
-        $("#game-name").css("color", "green");
+        $("#game-name").text("CORRECT!").css("color" , "lime");
         var delayCorrDisp = setTimeout(function() {
             $("#game-name").text(saveCurrentDisplay); // Display this answer's result briefly
+            $(".title-text").css("color" , "purple");
         }, 2000);
-        $("#game-name").css("color", "purple");
+        // $(".title-text").css("color" , "purple");
         
     };
 
     function nonCelebrateWrongAns() {
-        if ( CURR_DEBUG) {
+        if ( DEBUG) {
             console.log("Troll them,humuliate them, They DIDN'T know their candies!!!");
         }
         var saveCurrentDisplay = $("#game-name").text();
         // alert("saveCurrentDisplay = " + saveCurrentDisplay);
         // More to come
         $("#game-name").text("NOPE!");
-        $("#game-name").css("color", "red");
+        $(".title-text ").css("color", "red");
         var delayInCorrDisp = setTimeout(function() {
-        $("#game-name").text(saveCurrentDisplay); // Display this answer's result briefly
+            $("#game-name").text(saveCurrentDisplay); // Display this answer's result briefly
+            $(".title-text ").css("color", "purple");
         }, 2000);
-        $("#game-name").css("color", "purple");
-
     };
 
-
-    // // TBD IF NEEDED... Question Object's Properties Initialization
-    // var corrAnsButtonNum = 0; // Will be randomized
-    // var wrongAnsButtonNums = []; // 0 to 3 excluding the correct answer locaton
-    // var candyObjArr = []; // An array of 16 objects, pushed on after being generated, access via index for randomness
-    // var ansLocSelected;  // Answers per question (up to 4) or start at 4 and quit when it's zero...
-    // // This games vars initialization
-    // var thisGamesQsArr = []; // 10 non-repeating random numbers from 0 to 15
-    // var thisQsWrongAnsArr = []; // 3 of 0 to 15 candy objects, re-used 10 times durinvg init of this game
 
 
     // Raw data for app
@@ -337,7 +314,7 @@ $(document).ready(function(){
     consumeRawCandy(gameObj.numOfRawCandy); // This call and the function WORK, 09/09/18
 
     gameObj.genQListArr();
-    if (CURR_DEBUG) {
+    if (DEBUG) {
         // Display this games parameters
         console.log("Display this games parameters...")
         console.log("gameObj.numOfRawCandy = " + gameObj.numOfRawCandy);
@@ -363,7 +340,7 @@ $(document).ready(function(){
         };
     };
 
-    if (CURR_DEBUG) {
+    if (DEBUG) {
         console.log("gameObj.initialPageLoad = " + gameObj.initialPageLoad);
     }
 
@@ -385,7 +362,7 @@ $(document).ready(function(){
         $("#button-re-start").on("click", function() {
             // Initialize Vars
             $("#button-re-start").css("background-color", "purple");    
-            if (CURR_DEBUG) {
+            if (DEBUG) {
                 console.log("That's the RE-START button!");
                 console.log("gameObj.initialPageLoad = " + gameObj.initialPageLoad);
             };
@@ -430,19 +407,17 @@ $(document).ready(function(){
     $(".button-answer-sel").on("click", function() {
         $(".button-answer-sel").css("background-color", "purple");
         // Identify button clicked
-        if (CURR_DEBUG) {
+        if (DEBUG) {
             console.log("That's the answer button group!");
             console.log("ANSWER-SEL: gameStats.totalQsCmpl + gameStats.totalQsToAsk " + gameStats.totalQsCmpl() + ", " +  gameStats.totalQsToAsk);
         };
 
-        // var ansSelected = $(".button-answer-sel").val().trim();
-        // var ansSelected = $(".button-answer-sel").text();
         // Get the specific ID from the button clicked
         ansSelected = "#" + $(this).attr("id");
+        ansSelected = ansSelected[ansSelected.length-1];
         // alert('$(this).attr("id") = ' + $(this).attr("id") + "; ansSelected = " + ansSelected);
-        if (CURR_DEBUG) {
-            console.log("ON CLICK ANSWER-SEL: ansSelected = " + ansSelected + "; ansSelected[ansSelected.length-1] = " + ansSelected[ansSelected.length-1]);
-            ansSelected = ansSelected[ansSelected.length-1];
+        if (DEBUG) {
+            // console.log("ON CLICK ANSWER-SEL: ansSelected = " + ansSelected + "; ansSelected[ansSelected.length-1] = " + ansSelected[ansSelected.length-1]);
             console.log("ansSelected = " + ansSelected + "; ");
             console.log("gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc = " + gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc);
             if (+ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc) {
@@ -460,27 +435,39 @@ $(document).ready(function(){
         if (+ansSelected === gameObj.gameQsObjectsObj[gameObj.gameQListNums[gameObj.currQuestion-1] ].corrAnsLoc ) {
             // Increment appropriate answer count
             gameStats.ansCorrect++;
+            $(this).css("background-color", "lime");
+                var delayBtnColorCorr= setTimeout(function() {
+                    $(this).css("background-color", "purple");
+                }, 2000);   
             celebrateCorrAns();
         } else {
             gameStats.ansInCorrect++;
+            $(this).css("background-color", "red");
+                var delayBtnColorIncorr= setTimeout(function() {
+                    $(this).css("background-color", "purple");
+                }, 2000);   
             nonCelebrateWrongAns();
         };
 
         // Check if all 10 questions have been asked...
         if ( gameStats.totalQsCmpl() < gameStats.totalQsToAsk) {
-            if (CURR_DEBUG) {
+            if (DEBUG) {
                 console.log("Let's ASK another one! TotalCmpl = " + gameStats.totalQsCmpl());
-                stopwatch.stop();
-                stopwatch.reset();
+              };
+              // More to come
+            stopwatch.stop();
+            stopwatch.reset();
+            var delayPostNextQ = setTimeout(function() {
                 postQuestion(gameObj.currQuestion); // currQuestion incremented at the end of the function.
                 stopwatch.start();
+           }, 2000);
+
     
-            };
         } else {
             // Game Over, display final results
             displayFinalResults();
         };
-        if (CURR_DEBUG) {
+        if (DEBUG) {
             console.log("gameObj.gameQsObjectsObj[jj].presentedAnswers" + gameObj.gameQsObjectsObj[jj].presentedAnswers);
             gameStats.printTotals();
         };

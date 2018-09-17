@@ -27,7 +27,8 @@ body {
     font-weight: bolder;
     font-style: italic;
     padding: 0px;
-    color: rgb(68, 11, 121);
+    /* color: rgb(68, 11, 121); */
+    color: purple;
 }
 
 .question-row {

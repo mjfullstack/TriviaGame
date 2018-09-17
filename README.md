@@ -16,4 +16,5 @@ Sugar Rush ACandy Trivia Game
 * 09/15/18 Initial Timer Implementation 
 * 09/15/18 Initial answer correct / incorrect detection added... debug in process
 * 09/16/18 Correct Incorrect detection debug complete, next is game stats
+* 09/16/18 Added color display to correct / wrong answers
 
